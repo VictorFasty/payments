@@ -4,8 +4,8 @@ CREATE TABLE tb_users (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     documento VARCHAR(14) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL,
+    email VARCHAR(35) NOT NULL UNIQUE,
+    senha VARCHAR(20) NOT NULL,
     tipo_usuario VARCHAR(20) NOT NULL,
     saldo DECIMAL(10, 2) DEFAULT 0.00
 );

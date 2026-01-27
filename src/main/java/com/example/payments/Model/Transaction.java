@@ -25,5 +25,6 @@ public class Transaction {
     @JoinColumn(name = "receiver_id")
     private Users receiver;
 
+    @Column(insertable = false, updatable = false)
     private LocalDateTime tempo;
 }
