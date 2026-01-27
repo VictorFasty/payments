@@ -11,10 +11,22 @@ import java.math.BigDecimal;
 public record UsersDto(
         @NotBlank
         @Email
+        @Size(min = 5, max = 100)
+        String nome,
+
+        @NotBlank
+        @Size(min = 11, max = 14)
+        String documento,
+
+        @NotBlank
+        @Email
         String email,
+
         @NotBlank
         @Size(min = 5, max = 18)
         String senha,
+
+
         TipoUsuario tipoUsuario,
         BigDecimal saldo
 ) {

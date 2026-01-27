@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +30,20 @@ public class UsersService {
         Users UserSaved = repository.save(users1);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(UserSaved);
+    }
+
+
+    public ResponseEntity<List<Users>> FindAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(repository.findAll());
+    }
+
+
+    public ResponseEntity<Users> FindById(Long id){
+        Optional<Users> users0 = repository.findById(id);
+        if(users0.isEmpty()) {
+            throw new RuntimeException("Usuario Nao Localizado");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(users0.get());
     }
 
 
