@@ -2,14 +2,17 @@ package com.example.payments.Services;
 
 import com.example.payments.Controllers.DTO.UsersDto;
 import com.example.payments.Controllers.Mappers.UsersMapper;
+import com.example.payments.Model.Enums.TipoUsuario;
 import com.example.payments.Model.Users;
 import com.example.payments.Repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,9 @@ public class UsersService {
             throw new RuntimeException("Documento Ja Existente");
         }
 
+        if(repository.findByEmail(users1.getEmail())){
+            throw new RuntimeException("Email ja vinculado");
+        }
 
         Users UserSaved = repository.save(users1);
 
@@ -47,6 +53,34 @@ public class UsersService {
     }
 
 
-    
+    public ResponseEntity<Users> update(Users users) {
+        if(users.getId() == null) {
+            throw new RuntimeException("Usuario nao existente");
+        }
 
+        if(repository.findByDocumento(users.getDocumento())){
+            throw new RuntimeException("Documento ja vinculado a usuario");
+        }
+
+
+        repository.save(users);
+        return ResponseEntity.ok().build();
+    }
+
+
+    public void Delete(Long id){
+        repository.deleteById(id);
+
+    }
+
+
+    public void validateTransaction(Users sender, BigDecimal amount) throws Exception {
+        if (sender.getTipoUsuario() == TipoUsuario.MERCHANT) {
+            throw new Exception("Lojistas não podem enviar dinheiro.");
+        }
+
+        if (sender.getSaldo().compareTo(amount) < 0) {
+            throw new Exception("Saldo insuficiente");
+        }
+    }
 }

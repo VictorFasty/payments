@@ -10,4 +10,6 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> FindBydocumento(String documento);
 
     boolean findByDocumento(String documento);
+
+    boolean findByEmail(String email);
 }
