@@ -12,6 +12,6 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     boolean findByDocumento(String documento);
 
     boolean findByEmail(String email);
-
-
+    boolean existsByEmailAndIdNot(String email, Long id);
+    boolean existsByDocumentoAndIdNot(String documento, Long id);
 }

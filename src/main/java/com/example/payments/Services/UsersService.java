@@ -53,18 +53,25 @@ public class UsersService {
     }
 
 
-    public ResponseEntity<Users> update(Users users) {
-        if(users.getId() == null) {
-            throw new RuntimeException("Usuario nao existente");
+    public ResponseEntity<Users> update(Long id, UsersDto dto) {
+
+        Users existingUser = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario nao existente"));
+
+        if (repository.existsByEmailAndIdNot(dto.email(), id)) {
+            throw new RuntimeException("Email ja esta registrado!");
         }
 
-        if(repository.findByDocumento(users.getDocumento())){
-            throw new RuntimeException("Documento ja vinculado a usuario");
+        if (repository.existsByDocumentoAndIdNot(dto.documento(), id)) {
+            throw new RuntimeException("Documento ja esta registrado!");
         }
 
+        existingUser.setNome(dto.nome());
+        existingUser.setEmail(dto.email());
 
-        repository.save(users);
-        return ResponseEntity.ok().build();
+
+        repository.save(existingUser);
+        return ResponseEntity.ok(existingUser);
     }
 
 
