@@ -1,5 +1,6 @@
 package com.example.payments.Services;
 
+import com.example.payments.Controllers.Common.Exceptions.NotFound;
 import com.example.payments.Controllers.DTO.TransactionDTO;
 import com.example.payments.Controllers.Mappers.TransactionMapper;
 import com.example.payments.Model.Transaction;
@@ -49,7 +50,7 @@ public class TransactionalService {
         Optional<Transaction> transaction1 = repository.findById(id);
 
         if(transaction1.isEmpty()) {
-            throw new RuntimeException("Transacao nao localizada!");
+            throw new NotFound("Transacao nao localizada!");
         }
         return ResponseEntity.status(HttpStatus.OK).body(transaction1.get());
     }
@@ -57,7 +58,7 @@ public class TransactionalService {
 
     public ResponseEntity<Transaction> update(Transaction transaction){
         if(repository.findById(transaction.getId()).isEmpty()){
-            throw new RuntimeException("Transacao nao encontrada");
+            throw new NotFound("Transacao nao encontrada");
         }
         repository.save(transaction);
         return ResponseEntity.ok().build();

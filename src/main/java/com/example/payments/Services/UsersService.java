@@ -1,5 +1,6 @@
 package com.example.payments.Services;
 
+import com.example.payments.Controllers.Common.Exceptions.*;
 import com.example.payments.Controllers.DTO.UsersDto;
 import com.example.payments.Controllers.Mappers.UsersMapper;
 import com.example.payments.Model.Enums.TipoUsuario;
@@ -26,11 +27,11 @@ public class UsersService {
     public ResponseEntity<Users> create(UsersDto dto){
         Users users1 = mapper.toEntity(dto);
         if(repository.findByDocumento(users1.getDocumento())) {
-            throw new RuntimeException("Documento Ja Existente");
+            throw new DuplicateDocumentException("Documento Ja Existente");
         }
 
         if(repository.findByEmail(users1.getEmail())){
-            throw new RuntimeException("Email ja vinculado");
+            throw new EmailAlreadyExistsException("Email ja vinculado");
         }
 
         Users UserSaved = repository.save(users1);
@@ -47,7 +48,7 @@ public class UsersService {
     public ResponseEntity<Users> FindById(Long id){
         Optional<Users> users0 = repository.findById(id);
         if(users0.isEmpty()) {
-            throw new RuntimeException("Usuario Nao Localizado");
+            throw new NotFound("Usuario Nao encontrado com o ID:" + id);
         }
         return ResponseEntity.status(HttpStatus.OK).body(users0.get());
     }
@@ -59,11 +60,11 @@ public class UsersService {
                 .orElseThrow(() -> new RuntimeException("Usuario nao existente"));
 
         if (repository.existsByEmailAndIdNot(dto.email(), id)) {
-            throw new RuntimeException("Email ja esta registrado!");
+            throw new Founded("Email ja esta registrado!");
         }
 
         if (repository.existsByDocumentoAndIdNot(dto.documento(), id)) {
-            throw new RuntimeException("Documento ja esta registrado!");
+            throw new Founded("Documento ja esta registrado!");
         }
 
         existingUser.setNome(dto.nome());
@@ -83,11 +84,11 @@ public class UsersService {
 
     public void validateTransaction(Users sender, BigDecimal amount) throws Exception {
         if (sender.getTipoUsuario() == TipoUsuario.MERCHANT) {
-            throw new Exception("Lojistas não podem enviar dinheiro.");
+            throw new InvalidUserTypeException("Lojistas não podem enviar dinheiro.");
         }
 
         if (sender.getSaldo().compareTo(amount) < 0) {
-            throw new Exception("Saldo insuficiente");
+            throw new UnauthorizedTransactionException("Saldo insuficiente");
         }
     }
 }
